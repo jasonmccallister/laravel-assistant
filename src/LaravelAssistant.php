@@ -22,10 +22,7 @@ class LaravelAssistant
 
     #[DaggerFunction]
     public function __construct(
-        #[DefaultPath(".")] #[
-            Doc("The source directory.")
-        ]
-        private readonly Directory $source
+        #[Doc("The source directory.")] private readonly Directory $source
     ) {
         $this->container = dag()
             ->php()
