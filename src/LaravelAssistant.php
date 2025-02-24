@@ -22,7 +22,7 @@ class LaravelAssistant
 
     #[DaggerFunction]
     public function __construct(
-        #[DefaultPath("..")] #[
+        #[DefaultPath(".")] #[
             Doc("The source directory.")
         ]
         private readonly Directory $source
