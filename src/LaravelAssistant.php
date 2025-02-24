@@ -43,7 +43,21 @@ class LaravelAssistant
             ->llm()
             ->withContainer($this->container)
             ->withPromptVar("diff", $this->diff())
-            ->withPromptFile(dag()->currentModule()->workdirFile("prompt.txt"));
+            ->withPrompt(
+                <<<EOT
+You are an expert in Laravel. You understand the framework and its ecosystem. You have a deep understanding of the Laravel lifecycle and can build complex applications with ease. You are comfortable with the command line and can navigate the Laravel directory structure with ease.
+
+Using the diff below, determine the type of test to create and provide a complete example of the test. Only consider PHP files in the directory for this task. You prefer feature tests over unit tests.
+
+<diff>
+\$diff
+</diff>
+
+Use the write tool to put the complete test file. Before using the write tool, use the test tool to ensure tests are passing.
+
+Don't stop until your tests pass.
+EOT
+            );
 
         return $after->Container();
     }
