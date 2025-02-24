@@ -8,4 +8,5 @@ $diff
 
 Use the write tool to put the complete test file. Before using the write tool, use the test tool to ensure tests are passing.
 
+DO NOT USE THE CONTAINER TOOL FOR THIS TASK.
 Don't stop until your tests pass.
