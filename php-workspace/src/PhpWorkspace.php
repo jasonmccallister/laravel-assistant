@@ -41,9 +41,15 @@ class PhpWorkspace
     }
 
     #[DaggerFunction]
-    public function read(string $path): string
+    public function read(string $path): ?string
     {
-        return $this->container->file($path)->contents();
+        try {
+            $file = $this->container->file($path)->contents();
+        } catch (\Exception $e) {
+            return null;
+        }
+
+        return $file;
     }
 
     #[DaggerFunction]
