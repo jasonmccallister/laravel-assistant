@@ -10,6 +10,7 @@ use Dagger\Attribute\Doc;
 use Dagger\Container;
 use Dagger\Directory;
 
+use Dagger\Error;
 use function Dagger\dag;
 
 #[DaggerObject]
@@ -25,20 +26,31 @@ class LaravelAssistant
     #[Doc("Assists with writing tests.")]
     public function writeTests(): Container
     {
-        $before = dag()->phpWorkspace($this->source);
+        $workspace = dag()->phpWorkspace($this->source);
+
+        $diff = $workspace->diff();
+        if ($diff === null) {
+            throw new Error("No diff found.");
+        }
 
         $after = dag()
             ->llm()
-            ->withPhpWorkspace($before)
+            ->withPromptVar("diff", $diff)
+            ->withPhpWorkspace($workspace)
             ->withPrompt(
                 <<<EOT
-You are an expert in Laravel. You understand the framework and its ecosystem. You have a deep understanding of the Laravel lifecycle and can build complex applications with ease. You are comfortable with the command line and can navigate the Laravel directory structure with ease.
+You are an expert in Laravel and PHP.
+You have been given access to a php workspace and a code repository.
 
-Examine the source code and write tests that are missing and ensure all tests pass.
+- Use the provided diff to examine what changes have been made to the project.
+- Use the runTests tool to ensure all tests pass.
+- Use the readFile tool to examine the source code in /app and write tests that are missing.
+- Use the listDirectory tool to view the contents of the application.
 
-Use the write tool to put the complete test file. Before using the write tool, use the test tool to ensure tests are passing.
-
-Don't stop until your tests pass.
+<diff>
+\$diff
+</diff>
+DON'T STOP UNTIL ALL TESTS PASS!
 EOT
             );
 

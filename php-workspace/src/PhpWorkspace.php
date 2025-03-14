@@ -35,13 +35,23 @@ class PhpWorkspace
     }
 
     #[DaggerFunction]
-    public function diff(): string
+    #[Doc("Show the output of the git changes.")]
+    public function diff(): ?string
     {
+        // make sure the container is a git repository
         return $this->container->withExec(["git", "diff"])->stdout();
     }
 
     #[DaggerFunction]
-    public function read(string $path): ?string
+    #[Doc("Lists the contents of the application directory.")]
+    public function listDirectory(): Directory
+    {
+        return $this->container->directory("/app");
+    }
+
+    #[DaggerFunction]
+    #[Doc("Reads a file from the container.")]
+    public function readFile(string $path): ?string
     {
         try {
             $file = $this->container->file($path)->contents();
@@ -53,14 +63,15 @@ class PhpWorkspace
     }
 
     #[DaggerFunction]
-    public function test(): string
+    #[Doc("Runs the tests in the container.")]
+    public function runTests(): string
     {
         return $this->container->withExec(["php", "artisan", "test"])->stdout();
     }
 
     #[DaggerFunction]
     #[Doc("Writes a file to the container.")]
-    public function write(string $path, string $contents): File
+    public function writeFile(string $path, string $contents): File
     {
         return $this->container->withNewFile($path, $contents)->file($path);
     }
